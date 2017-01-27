@@ -19,7 +19,7 @@ class Compress {
 
 	private function add_hooks() {
 		if ( !is_admin() ) {
-			add_action( 'init', array( $this, 'setup_globals' ), -100, 0 );
+			add_action( 'wp', array( $this, 'setup_globals' ), -100, 0 );
 			add_action( 'shutdown', array( $this, 'maybe_queue' ), 10, 0 );
 			add_action( self::CRON_HOOK, array( $this, 'maybe_concatenate' ), 0, 0 );
 			add_action( 'wp', array( $this, 'clear_cache_on_404' ), 10, 1 );
@@ -31,15 +31,31 @@ class Compress {
 	 */
 	public function setup_globals() {
 		global $wp_scripts, $wp_styles;
-		$scripts_option = Compress_Option::get_js_setting();
-		if ( $scripts_option != Compress_Option::SHRINK_OPT_NONE ) {
-			$wp_scripts = new Compress_WP_Scripts();
-		}
-		$style_option = Compress_Option::get_css_setting();
-		if ( $style_option != Compress_Option::SHRINK_OPT_NONE ) {
-			$wp_styles = new Compress_WP_Styles();
+		if( !$this->is_excluded_url() ){
+			$scripts_option = Compress_Option::get_js_setting();
+			if( $scripts_option != Compress_Option::SHRINK_OPT_NONE ){
+				$wp_scripts = new Compress_WP_Scripts();
+			}
+			$style_option = Compress_Option::get_css_setting();
+			if( $style_option != Compress_Option::SHRINK_OPT_NONE ){
+				$wp_styles = new Compress_WP_Styles();
+			}
 		}
 	}
+
+
+	private function is_excluded_url(){
+		global $wp;
+		$exclusions = Compress_Option::get_exclusions();
+		foreach( $exclusions as $_preg ){
+			if( preg_match( '/' . $_preg . '/', $wp->request ) === 1 ){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 
 	public function flush_cache() {
 		$cache_dir = $this->cache_path();

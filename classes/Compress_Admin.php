@@ -40,7 +40,7 @@ class Compress_Admin {
 	public function register_settings_page() {
 		add_options_page(
 			__( 'JavaScript/CSS Minification Settings', 'compress' ),
-			__( 'Compress Shrinker', 'compress' ),
+			__( 'Compress', 'compress' ),
 			'manage_options',
 			self::SLUG,
 			array($this, 'display_settings_page')
@@ -72,6 +72,12 @@ class Compress_Admin {
 			array( $this, 'display_js_field' ),
 			self::SLUG
 		);
+		add_settings_field(
+			Compress_Option::EXCLUSIONS,
+			__( 'Excluded Page Urls', 'compress' ),
+			[ $this, 'display_exclusions_field' ],
+			self::SLUG
+		);
 		register_setting(
 			self::SLUG,
 			Compress_Option::SHRINK_CSS
@@ -79,6 +85,10 @@ class Compress_Admin {
 		register_setting(
 			self::SLUG,
 			Compress_Option::SHRINK_JS
+		);
+		register_setting(
+			self::SLUG,
+			Compress_Option::EXCLUSIONS
 		);
 	}
 
@@ -96,6 +106,23 @@ class Compress_Admin {
 
 	public function display_settings_section() {
 
+	}
+
+
+	public function display_exclusions_field() {
+		$current = Compress_Option::get_exclusions();
+
+		?>
+        <p>
+            <textarea name="<?php echo Compress_Option::EXCLUSIONS; ?>" class="regular-text" ><?php echo implode( ',', $current ); ?></textarea>
+        </p>
+        <p class="description">
+			<?php _e( 'These page will receive the uncompress/concatenated css and js.', 'compress' ); ?>
+        </p>
+        <p class="description">
+            <?php _e( 'Urls relative to root of site.Comma Separated. RegEx e.g. ^invoice[\S]*', 'compress' ); ?>
+        </p>
+		<?php
 	}
 
 	public function display_css_field() {
