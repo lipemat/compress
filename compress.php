@@ -17,7 +17,9 @@ if ( !function_exists('compress_load') ) {
 		add_action('plugins_loaded', array('Compress', 'init'));
 		add_action('plugins_loaded', array('Compress_Admin', 'init'));
 	}
-	compress_load();
+	if( !defined( 'SCRIPT_DEBUG' ) || !SCRIPT_DEBUG ){
+		compress_load();
+	}
 }
 
 function compress_flush() {
