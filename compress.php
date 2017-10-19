@@ -4,7 +4,7 @@
  * Description: Combine and Compress CSS and JS
  * Author: Mat Lipe
  * Author URI: https://matlipe.com
- * Version: 1.1.0
+ * Version: 1.2.0
  *
  */
 if ( !function_exists('compress_load') ) {
