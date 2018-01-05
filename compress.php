@@ -16,6 +16,7 @@ if ( !function_exists('compress_load') ) {
 		require_once('classes/Compress_Admin.php');
 		add_action('plugins_loaded', array('Compress', 'init'));
 		add_action('plugins_loaded', array('Compress_Admin', 'init'));
+		add_action( 'wp_cache_flush', 'compress_flush' );
 	}
 	if( !defined( 'SCRIPT_DEBUG' ) || !SCRIPT_DEBUG ){
 		compress_load();
